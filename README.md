@@ -100,8 +100,40 @@ Then open the URL Vite prints (by default http://localhost:5173).
 | `npm run preview` | Serve the production build locally |
 | `npm test` | Run the unit tests once |
 | `npm run typecheck` | Type-check without emitting files |
+| `npm run release` | Bump the version, update `CHANGELOG.md`, commit and tag |
+| `npm run release:dry` | Preview what `release` would do without changing anything |
+| `npm run release:first` | Tag the current version as the first release without bumping it |
 
 The production build is a static site, so `dist/` can be deployed to any static host (GitHub Pages, Netlify, Vercel, Cloudflare Pages…).
+
+## Releasing
+
+Versioning is handled by [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version), based on [Conventional Commits](https://www.conventionalcommits.org):
+
+| Commit | From `1.0.0` | While on `0.x` |
+| --- | --- | --- |
+| `fix:` | patch | patch |
+| `feat:` | minor | patch |
+| `BREAKING CHANGE:` footer or `!` after the type (`feat!:`) | major | minor |
+
+To leave `0.x`, release once with `npm run release -- --release-as 1.0.0`.
+
+To cut a release from `main`:
+
+```bash
+npm run release:dry          # check the next version and changelog
+npm run release              # bump package.json/package-lock.json, update CHANGELOG.md, commit and tag
+git push --follow-tags origin main
+```
+
+Useful options:
+
+```bash
+npm run release -- --release-as minor     # force a bump type or exact version (e.g. 1.0.0)
+npm run release -- --prerelease beta      # 0.2.0-beta.0
+```
+
+Changelog sections are configured in [`.versionrc.json`](.versionrc.json). `chore`, `build`, `ci`, `style` and `test` commits are left out of the changelog.
 
 ## Project structure
 
